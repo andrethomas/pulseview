@@ -674,6 +674,14 @@ if(WIN32 AND NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-mwindows")
 endif()
 
+# Workaround CMake messing with libraries static and dynamic
+# This adds a post-processing of invalid linklibs.rsp file
+# So that the link can find the right libraries in their correct version
+if(WIN32)
+	set(library_prefix "$ENV{PREFIX}" )
+	add_custom_command(TARGET ${PROJECT_NAME} PRE_LINK COMMAND python "../../../../common/CleanLinkLibRsp.py" "CMakeFiles/pulseview.dir/linkLibs.rsp" ${library_prefix} ) 
+endif()
+
 #===============================================================================
 #= Installation
 #-------------------------------------------------------------------------------
